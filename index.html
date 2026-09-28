@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1e1b4b">
+<title>ماموریت پروفسور کیمیا | مهندس رحمانی</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{touch-action:manipulation;overscroll-behavior:none}
+body{margin:0;padding:0;font-family:'Vazirmatn',Tahoma,sans-serif;color:#1e293b;
+  background:radial-gradient(1200px 700px at 20% -10%,#312e81 0%,#1e1b4b 40%,#0f172a 100%);
+  min-height:100vh;overflow-x:hidden;transition:background 1.5s;
+  padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+body.day{background:linear-gradient(160deg,#eef5ff 0%,#f8fbff 45%,#fff7ed 100%);color:#1e293b}
+
+/* ---------- صحنه آغازین ---------- */
+#intro{position:fixed;inset:0;background:radial-gradient(circle at 50% 30%,#312e81,#0f172a);
+  z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;
+  transition:opacity .8s,visibility .8s;overflow-y:auto}
+#intro.hide{opacity:0;visibility:hidden;pointer-events:none}
+.intro-card{max-width:560px;width:100%;background:rgba(30,27,75,.88);border:1px solid rgba(129,140,248,.4);
+  border-radius:26px;padding:26px 20px;text-align:center;backdrop-filter:blur(10px);
+  box-shadow:0 30px 70px rgba(0,0,0,.5);margin:auto}
+.creator-top{font-size:11.5px;color:#fbbf24;font-weight:800;letter-spacing:.5px;margin-bottom:8px;
+  background:rgba(251,191,36,.12);display:inline-block;padding:5px 14px;border-radius:999px;
+  border:1px solid rgba(251,191,36,.35)}
+.prof-avatar{font-size:68px;filter:drop-shadow(0 0 22px rgba(165,180,252,.9));
+  animation:float 3s ease-in-out infinite;display:inline-block;margin-top:8px}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.intro-title{color:#c7d2fe;font-size:14px;font-weight:700;margin-top:6px;letter-spacing:1px}
+.intro-text{color:#e0e7ff;font-size:14.5px;line-height:2;min-height:120px;margin:20px 0;font-weight:600}
+.intro-text .cursor{display:inline-block;width:8px;height:16px;background:#a5b4fc;vertical-align:middle;
+  animation:blink .7s steps(2) infinite;border-radius:2px;margin-right:3px}
+@keyframes blink{50%{opacity:0}}
+#startBtn{background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;border:none;
+  font-family:inherit;font-weight:800;font-size:16px;padding:15px 40px;border-radius:16px;cursor:pointer;
+  box-shadow:0 14px 30px rgba(99,102,241,.5);transition:.25s;opacity:0;pointer-events:none;
+  min-height:52px;width:100%;max-width:260px}
+#startBtn.show{opacity:1;pointer-events:auto}
+#startBtn:active{transform:scale(.97)}
+
+/* ---------- هدر ---------- */
+header{padding:14px 14px 0;text-align:center}
+h1{font-size:clamp(18px,3.4vw,30px);margin:0 0 6px;font-weight:900;
+   background:linear-gradient(90deg,#818cf8,#22d3ee,#f472b6);
+   -webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{font-size:clamp(11px,1.6vw,13px);color:#a5b4fc;margin:0 0 4px;font-weight:600}
+.creator-bar{display:inline-block;font-size:11px;color:#fbbf24;font-weight:800;
+  background:rgba(251,191,36,.12);padding:4px 12px;border-radius:999px;
+  border:1px solid rgba(251,191,36,.3);margin-top:4px}
+body.day .creator-bar{background:rgba(251,191,36,.2);color:#b45309;border-color:rgba(180,83,9,.3)}
+
+/* ---------- نوار پیشرفت ---------- */
+.story-bar{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px auto 12px;
+  max-width:560px;padding:0 14px}
+.step{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:13px;background:#1e293b;color:#475569;border:2px solid #334155;transition:.4s;position:relative;flex-shrink:0}
+body.day .step{background:#fff;color:#94a3b8;border-color:#e2e8f0}
+.step.unlocked{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent;
+  box-shadow:0 0 0 5px rgba(99,102,241,.18)}
+.step.done::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#10b981,#059669);border-radius:50%;color:#fff;font-size:18px}
+.step-line{flex:1;height:3px;background:#334155;border-radius:2px;transition:.6s;max-width:70px}
+body.day .step-line{background:#e2e8f0}
+.step-line.filled{background:linear-gradient(90deg,#6366f1,#8b5cf6)}
+
+/* ---------- پنل‌ها ---------- */
+.panel{display:none;max-width:1080px;margin:0 auto;padding:0 12px 140px}
+.panel.active{display:block;animation:fade .5s}
+@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* ---------- دیالوگ با شخصیت‌های مختلف ---------- */
+#dialogue{position:fixed;left:0;right:0;bottom:0;padding:10px;z-index:900;
+  display:flex;justify-content:center;pointer-events:none;transition:transform .4s;
+  transform:translateY(130%);padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+#dialogue.show{transform:translateY(0)}
+.dlg-inner{max-width:760px;width:100%;background:#fff;border-radius:20px;padding:13px 15px;
+  display:flex;gap:11px;align-items:flex-start;box-shadow:0 18px 44px rgba(15,23,42,.3);
+  border:2px solid var(--dlg-color,#e0e7ff);pointer-events:auto;
+  border-right:6px solid var(--dlg-color,#6366f1)}
+.dlg-avatar{font-size:34px;flex-shrink:0;line-height:1;
+  animation:dlgBounce .5s ease}
+@keyframes dlgBounce{0%{transform:scale(.3) rotate(-20deg)}100%{transform:scale(1) rotate(0)}}
+.dlg-body{flex:1;min-width:0}
+.dlg-name{font-size:12px;font-weight:800;color:var(--dlg-color,#6366f1);margin-bottom:3px}
+.dlg-text{font-size:13.5px;line-height:1.8;color:#1e293b;font-weight:600}
+.dlg-next{margin-top:8px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;
+  font-family:inherit;font-weight:700;font-size:12.5px;padding:8px 18px;border-radius:10px;cursor:pointer;
+  min-height:36px;transition:.15s}
+.dlg-next:active{transform:scale(.96)}
+
+/* ---------- مرحله ۱ ---------- */
+.board{position:relative;display:flex;justify-content:space-between;align-items:flex-end;
+  direction:ltr;gap:8px;padding:20px 14px;min-height:440px;
+  background:rgba(255,255,255,.78);border-radius:24px;border:1px solid #e2e8f0;
+  box-shadow:0 12px 34px rgba(15,23,42,.07);overflow:hidden}
+.beaker-wrap{position:relative;z-index:5;direction:rtl;display:flex;flex-direction:column;
+  align-items:center;gap:6px;cursor:pointer;transition:transform .2s;user-select:none;
+  padding:6px;border-radius:18px;min-width:0}
+.beaker-wrap:active{transform:scale(.97)}
+.beaker-wrap:hover .beaker{border-color:#818cf8;box-shadow:0 0 0 4px rgba(129,140,248,.18)}
+.beaker{position:relative;width:120px;height:160px;border:5px solid #94a3b8;border-top:none;
+  border-radius:8px 8px 24px 24px;overflow:hidden;
+  background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(241,245,249,.95));
+  box-shadow:inset 0 -8px 16px rgba(0,0,0,.05);transition:.2s}
+.beaker .rim{position:absolute;top:-3px;left:-10px;right:-10px;height:7px;background:#94a3b8;border-radius:5px}
+.liquid{position:absolute;left:0;right:0;bottom:0;height:55%;transition:height .9s cubic-bezier(.4,0,.2,1)}
+.liquid.polar{background:linear-gradient(180deg,#bae6fd,#7dd3fc)}
+.liquid.nonpolar{background:linear-gradient(180deg,#fde68a,#fbbf24)}
+.chips{position:absolute;inset:0;display:flex;flex-wrap:wrap;align-content:flex-end;justify-content:center;
+  gap:2px;padding:5px;z-index:3}
+.chip{background:rgba(255,255,255,.92);border-radius:6px;font-size:9px;padding:2px 4px;color:#334155;
+  font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.18);animation:pop .45s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.blabel{text-align:center;line-height:1.3}
+.blabel strong{display:block;font-size:14px;color:#1e293b}
+.blabel .tag{display:inline-block;margin-top:3px;font-size:9.5px;padding:1px 7px;border-radius:999px;font-weight:700}
+.tag.polar{background:#dbeafe;color:#1d4ed8}
+.tag.nonpolar{background:#fef3c7;color:#b45309}
+
+.mol-card{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%) scale(1);
+  width:min(300px,78vw);background:#fff;border-radius:18px;padding:10px 12px 8px;
+  box-shadow:0 18px 44px rgba(15,23,42,.22);border:2px solid #e2e8f0;z-index:20;
+  text-align:center;pointer-events:none;
+  transition:left .9s cubic-bezier(.34,1.25,.64,1),top .9s cubic-bezier(.34,1.25,.64,1),
+             transform .9s cubic-bezier(.34,1.25,.64,1),opacity .55s}
+.mol-card.wobble{animation:wobble .65s ease-in-out infinite}
+@keyframes wobble{0%,100%{transform:translate(-50%,-50%) scale(.4) rotate(-4deg)}
+  50%{transform:translate(-50%,-50%) scale(.4) rotate(4deg)}}
+.mol-name{font-weight:800;font-size:14px;color:#1e293b;margin-bottom:3px}
+.mol-formula{font-family:ui-monospace,monospace;font-size:12px;color:#475569;margin-top:3px;letter-spacing:.5px}
+.struct{width:100%;height:auto;max-height:72px;display:block;margin:0 auto}
+.atom{font-family:'Vazirmatn',Tahoma,sans-serif;font-size:16px;font-weight:800;fill:#1e293b}
+.bond{stroke:#64748b;stroke-width:2.6;stroke-linecap:round}
+.bond.hi{stroke:#e11d48;stroke-width:3.2}
+.struct-html{direction:ltr;text-align:left;font-family:ui-monospace,monospace;font-size:11px;
+  line-height:1.7;color:#334155;padding:2px 6px}
+.struct-html .tail{color:#2563eb;font-weight:700}
+.struct-html .head{color:#dc2626;font-weight:700}
+
+.hud{display:flex;justify-content:space-between;align-items:center;margin:12px 4px 0;flex-wrap:wrap;gap:6px}
+.pill{background:#fff;border:1px solid #e2e8f0;border-radius:999px;padding:6px 13px;font-size:12.5px;
+  font-weight:700;color:#475569;box-shadow:0 3px 10px rgba(15,23,42,.05)}
+.pill b{color:#4f46e5}
+.feedback{margin:12px 0 0;padding:13px 16px;border-radius:16px;font-size:13px;line-height:1.85;
+  background:#fff;border:1px solid #e2e8f0;box-shadow:0 6px 18px rgba(15,23,42,.05);transition:.3s}
+.feedback.success{background:#ecfdf5;border-color:#6ee7b7;color:#065f46}
+.feedback.error{background:#fef2f2;border-color:#fca5a5;color:#991b1b}
+.feedback.info{background:#eff6ff;border-color:#93c5fd;color:#1e40af}
+
+/* ---------- مرحله ۲ ---------- */
+.quiz-layout{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:860px){.quiz-layout{grid-template-columns:1.05fr 1fr;align-items:start}}
+.card{background:#fff;border-radius:20px;padding:16px;border:1px solid #e2e8f0;
+  box-shadow:0 12px 34px rgba(15,23,42,.07)}
+.soap-svg{width:100%;height:auto}
+.sp-tail{fill:none;stroke:#3b82f6;stroke-width:5;stroke-linejoin:round;stroke-linecap:round;transition:.35s}
+.sp-bond{stroke:#94a3b8;stroke-width:5;stroke-linecap:round}
+.sp-head{fill:#fee2e2;stroke:#ef4444;stroke-width:4;transition:.35s}
+.sp-na{fill:#dcfce7;stroke:#22c55e;stroke-width:4;transition:.35s}
+.sp-txt{font-family:'Vazirmatn',Tahoma,sans-serif;font-size:22px;font-weight:800;fill:#1e293b}
+.sp-tail.hl,.sp-head.hl,.sp-na.hl{stroke:#f59e0b;fill:#fef3c7;filter:drop-shadow(0 0 9px rgba(245,158,11,.95))}
+.legend{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+.lg{font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px}
+.lg.tail{background:#dbeafe;color:#1d4ed8}
+.lg.head{background:#fee2e2;color:#b91c1c}
+.lg.na{background:#dcfce7;color:#15803d}
+.q-progress{font-size:12px;color:#94a3b8;font-weight:700;margin-bottom:6px}
+.q-text{font-size:15px;font-weight:800;line-height:1.75;margin-bottom:12px;color:#1e293b}
+.q-options{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:right;font-family:inherit;font-size:13.5px;font-weight:600;padding:14px 16px;border-radius:14px;
+  border:2px solid #e2e8f0;background:#f8fafc;cursor:pointer;transition:.18s;color:#334155;
+  min-height:48px;touch-action:manipulation}
+.opt:active{transform:scale(.98)}
+.opt.correct{background:#ecfdf5;border-color:#34d399;color:#065f46}
+.opt.wrong{background:#fef2f2;border-color:#f87171;color:#991b1b;animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(6px)}75%{transform:translateX(-6px)}}
+.opt:disabled{cursor:default;opacity:.85}
+.q-feedback{margin-top:12px;font-size:12.5px;line-height:1.85;padding:12px 15px;border-radius:14px;display:none}
+.q-feedback.show{display:block}
+.q-feedback.ok{background:#ecfdf5;color:#065f46;border:1px solid #6ee7b7}
+.q-feedback.no{background:#fef2f2;color:#991b1b;border:1px solid #fca5a5}
+
+/* ---------- مرحله ۳ ---------- */
+.lab{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:880px){.lab{grid-template-columns:1.15fr .85fr;align-items:start}}
+.reagents{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:9px}
+.reagent{display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 8px;border-radius:14px;
+  border:2px solid #e2e8f0;background:#fff;cursor:pointer;font-family:inherit;transition:.18s;
+  box-shadow:0 4px 12px rgba(15,23,42,.05);min-height:96px;touch-action:manipulation}
+.reagent:active{transform:scale(.97)}
+.reagent.selected{background:linear-gradient(135deg,#eef2ff,#e0e7ff);border-color:#6366f1;
+  box-shadow:0 8px 20px rgba(99,102,241,.25)}
+.reagent .r-icon{font-size:22px;line-height:1}
+.reagent .r-name{font-size:11px;font-weight:700;color:#1e293b;text-align:center;line-height:1.35}
+.reagent .r-formula{font-family:ui-monospace,monospace;font-size:10px;color:#64748b}
+.lab-bench{display:flex;flex-direction:column;align-items:center;gap:14px}
+.lab-beaker{position:relative;width:180px;height:220px;border:6px solid #94a3b8;border-top:none;
+  border-radius:10px 10px 32px 32px;overflow:hidden;background:linear-gradient(180deg,#fff,#f8fafc);
+  box-shadow:inset 0 -10px 22px rgba(0,0,0,.06),0 14px 30px rgba(15,23,42,.1)}
+.lab-beaker .rim{position:absolute;top:-4px;left:-14px;right:-14px;height:9px;background:#94a3b8;border-radius:6px;z-index:4}
+.lab-liquid{position:absolute;left:0;right:0;bottom:0;height:0;transition:height 1s cubic-bezier(.4,0,.2,1),background 1s}
+.lab-contents{position:absolute;inset:0;display:flex;flex-wrap:wrap;align-content:flex-end;justify-content:center;
+  gap:3px;padding:8px;z-index:3}
+.lab-contents .chip{font-size:9.5px}
+.bubble{position:absolute;bottom:0;border-radius:50%;background:rgba(255,255,255,.75);
+  animation:rise 2.6s ease-in infinite;z-index:2}
+@keyframes rise{0%{transform:translateY(0) scale(.4);opacity:0}20%{opacity:.9}100%{transform:translateY(-190px) scale(1.1);opacity:0}}
+.lab-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:100%}
+.btn{font-family:inherit;font-weight:700;border:none;border-radius:14px;padding:13px 22px;cursor:pointer;
+  font-size:14px;transition:.2s;min-height:48px;touch-action:manipulation}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;box-shadow:0 8px 20px rgba(99,102,241,.35);flex:1}
+.btn.ghost{background:#f1f5f9;color:#475569}
+.hint-box{font-size:11.5px;color:#64748b;line-height:1.9;background:#f8fafc;border:1px dashed #cbd5e1;
+  border-radius:14px;padding:12px 14px;margin-top:12px}
+.formula-line{direction:ltr;display:block;font-family:ui-monospace,monospace;font-size:12px;
+  margin:5px 0;background:#f1f5f9;padding:7px 10px;border-radius:9px;color:#1e293b}
+
+/* ---------- نشان ---------- */
+.badge-popup{position:fixed;inset:0;background:rgba(15,23,42,.78);z-index:1500;display:none;
+  align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.badge-popup.show{display:flex;animation:fade .4s}
+.badge-card{background:linear-gradient(160deg,#fff,#f1f5f9);border-radius:24px;padding:26px 22px;text-align:center;
+  max-width:360px;width:100%;box-shadow:0 30px 70px rgba(0,0,0,.4);border:3px solid #fbbf24;
+  animation:badgeIn .6s cubic-bezier(.34,1.56,.64,1)}
+@keyframes badgeIn{from{transform:scale(.4) rotate(-15deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.badge-icon{font-size:72px;line-height:1;filter:drop-shadow(0 6px 14px rgba(251,191,36,.6));
+  animation:float 2.5s ease-in-out infinite}
+.badge-title{font-size:19px;font-weight:900;color:#b45309;margin:10px 0 4px}
+.badge-desc{font-size:12.5px;color:#475569;line-height:1.8;margin-bottom:16px}
+
+/* ---------- کارنامه نهایی ---------- */
+.scoreboard-popup{position:fixed;inset:0;background:rgba(15,23,42,.9);z-index:1600;display:none;
+  align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px);overflow-y:auto}
+.scoreboard-popup.show{display:flex;animation:fade .5s}
+.scoreboard{background:linear-gradient(160deg,#fff,#f8fafc);border-radius:26px;padding:24px 20px;
+  max-width:440px;width:100%;box-shadow:0 30px 70px rgba(0,0,0,.6);
+  border:3px solid #6366f1;margin:auto;animation:badgeIn .7s cubic-bezier(.34,1.56,.64,1)}
+.sb-title{text-align:center;font-size:20px;font-weight:900;color:#4f46e5;margin-bottom:4px}
+.sb-sub{text-align:center;font-size:12px;color:#64748b;margin-bottom:18px}
+.sb-medal{text-align:center;font-size:80px;line-height:1;filter:drop-shadow(0 8px 18px rgba(251,191,36,.7));
+  animation:float 3s ease-in-out infinite}
+.sb-grade{text-align:center;font-size:26px;font-weight:900;color:#b45309;margin:10px 0 4px}
+.sb-grade-title{text-align:center;font-size:13.5px;color:#475569;font-weight:700;margin-bottom:18px}
+.sb-breakdown{background:#f1f5f9;border-radius:14px;padding:14px;margin-bottom:16px}
+.sb-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;
+  font-size:13px;font-weight:700;color:#334155;border-bottom:1px dashed #cbd5e1}
+.sb-row:last-child{border-bottom:none}
+.sb-row .sb-val{color:#4f46e5;font-weight:900;font-size:14.5px}
+.sb-total{margin-top:8px;padding-top:12px;border-top:2px solid #6366f1;
+  display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:900;color:#1e293b}
+.sb-total .sb-val{color:#dc2626;font-size:20px}
+.sb-best{text-align:center;font-size:11.5px;color:#64748b;font-weight:700;margin-bottom:16px;
+  background:#fef3c7;padding:6px 10px;border-radius:10px;display:inline-block;width:100%}
+.sb-creator{text-align:center;font-size:11.5px;color:#b45309;font-weight:800;
+  margin-top:12px;padding-top:12px;border-top:1px dashed #fbbf24}
+.sb-actions{display:flex;gap:8px;margin-top:16px}
+.sb-actions .btn{flex:1}
+
+/* ---------- کاغذرنگی ---------- */
+.confetti{position:fixed;width:10px;height:14px;top:-20px;z-index:2000;pointer-events:none;border-radius:2px;
+  animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.3}}
+
+/* ================= موبایل ================= */
+@media(max-width:720px){
+  header{padding-top:10px}
+  .board{min-height:380px;padding:14px 8px;gap:4px}
+  .beaker{width:96px;height:130px;border-width:4px}
+  .beaker .rim{left:-8px;right:-8px;height:6px}
+  .blabel strong{font-size:12.5px}
+  .blabel .tag{font-size:9px;padding:1px 6px}
+  .mol-card{width:min(250px,86vw);padding:9px 10px}
+  .struct{max-height:56px}
+  .mol-name{font-size:12.5px}
+  .mol-formula{font-size:10.5px}
+  .pill{font-size:11.5px;padding:5px 11px}
+  .feedback{font-size:12.5px;padding:11px 13px}
+  .card{padding:13px;border-radius:18px}
+  .q-text{font-size:14px}
+  .opt{font-size:13px;padding:13px 14px}
+  .reagents{grid-template-columns:repeat(2,1fr);gap:8px}
+  .reagent{padding:10px 6px;min-height:88px}
+  .reagent .r-icon{font-size:20px}
+  .reagent .r-name{font-size:10.5px}
+  .lab-beaker{width:150px;height:185px}
+  .step{width:32px;height:32px;font-size:12px}
+  .step-line{max-width:40px}
+  .dlg-text{font-size:13px}
+  .dlg-avatar{font-size:30px}
+  .badge-icon{font-size:64px}
+  .sb-medal{font-size:64px}
+  .sb-grade{font-size:22px}
+  .intro-card{padding:22px 16px}
+  .intro-text{font-size:13.5px;min-height:100px}
+  .prof-avatar{font-size:58px}
+}
+@media(max-width:400px){
+  .beaker{width:82px;height:112px}
+  .board{min-height:340px}
+  .mol-card{width:min(220px,90vw)}
+  .reagent{padding:8px 4px;min-height:80px}
+  .reagent .r-name{font-size:9.5px}
+  .lab-beaker{width:135px;height:170px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ صحنه آغازین ============ -->
+<div id="intro">
+  <div class="intro-card">
+    <div class="creator-top">✍️ اثر آموزشی: مهندس رحمانی</div>
+    <div class="prof-avatar">👩‍🔬</div>
+    <div class="intro-title">آزمایشگاه سری پروفسور کیمیا</div>
+    <div class="intro-text" id="introText"></div>
+    <button id="startBtn">🚀 شروع ماموریت</button>
+  </div>
+</div>
+
+<header>
+  <h1>🧪 ماموریت پروفسور کیمیا</h1>
+  <p class="sub">قطبی، ناقطبی، و راز صابون — یک ماجرای شیمیایی</p>
+  <div class="creator-bar">✍️ طراحی آموزشی: مهندس رحمانی</div>
+</header>
+
+<!-- ============ نوار پیشرفت داستان ============ -->
+<div class="story-bar">
+  <div class="step" data-step="1">۱</div>
+  <div class="step-line" data-line="1"></div>
+  <div class="step" data-step="2">۲</div>
+  <div class="step-line" data-line="2"></div>
+  <div class="step" data-step="3">۳</div>
+</div>
+
+<!-- ============ مرحله ۱ ============ -->
+<section class="panel active" id="panel-1">
+  <div class="board" id="board">
+    <div class="beaker-wrap" id="beakerLeft">
+      <div class="beaker"><div class="rim"></div>
+        <div class="liquid polar" style="height:55%" data-h="55"></div>
+        <div class="chips"></div></div>
+      <div class="blabel"><strong>اوره</strong><span class="tag polar">حلال قطبی</span></div>
+    </div>
+    <div class="beaker-wrap" id="beakerRight">
+      <div class="beaker"><div class="rim"></div>
+        <div class="liquid nonpolar" style="height:55%" data-h="55"></div>
+        <div class="chips"></div></div>
+      <div class="blabel"><strong>هگزان</strong><span class="tag nonpolar">حلال ناقطبی</span></div>
+    </div>
+  </div>
+  <div class="hud">
+    <span class="pill" id="progress">مولکول ۱ از ۷</span>
+    <span class="pill">امتیاز: <b id="score">۰</b></span>
+  </div>
+  <div class="feedback info" id="feedback">روی هر بشر کلیک کن تا مولکول را داخلش بیندازی.</div>
+</section>
+
+<!-- ============ مرحله ۲ ============ -->
+<section class="panel" id="panel-2">
+  <div class="quiz-layout">
+    <div class="card">
+      <svg viewBox="0 0 560 165" class="soap-svg">
+        <polyline id="soapTail" class="sp-tail" points="18,112 46,84 74,112 102,84 130,112 158,84 186,112 214,84 242,112 270,84 298,112"/>
+        <line x1="298" y1="112" x2="348" y2="112" class="sp-bond"/>
+        <rect id="soapHead" class="sp-head" x="350" y="88" width="86" height="48" rx="14"/>
+        <text x="393" y="119" text-anchor="middle" class="sp-txt">COO⁻</text>
+        <circle id="soapNa" class="sp-na" cx="494" cy="52" r="30"/>
+        <text x="494" y="61" text-anchor="middle" class="sp-txt">Na⁺</text>
+      </svg>
+      <div class="legend">
+        <span class="lg tail">R — ناقطبی (آبگریز)</span>
+        <span class="lg head">COO⁻ — قطبی (آبدوست)</span>
+        <span class="lg na">Na⁺ — کاتیون</span>
+      </div>
+      <div class="hint-box">
+        صابون یک <b>سورفکتانت آنیونی</b> است: یک سر آب‌دوست (قطبی) و یک سر آب‌گریز (ناقطبی).
+      </div>
+    </div>
+    <div class="card">
+      <div class="q-progress" id="qProgress"></div>
+      <div class="q-text" id="qText"></div>
+      <div class="q-options" id="qOptions"></div>
+      <div class="q-feedback" id="qFeedback"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ مرحله ۳ ============ -->
+<section class="panel" id="panel-3">
+  <div class="lab">
+    <div class="card">
+      <div style="font-weight:800;font-size:14px;margin-bottom:10px">🧫 مواد را انتخاب کن</div>
+      <div class="reagents" id="reagents"></div>
+      <div class="hint-box">
+        <b>راهنمای ربات مولک:</b> باز مناسب + استر بلندزنجیر = صابون. اما نوع باز، مایع یا جامد بودن صابون را تعیین می‌کند!
+      </div>
+    </div>
+    <div class="card">
+      <div class="lab-bench">
+        <div class="lab-beaker" id="labBeaker">
+          <div class="rim"></div>
+          <div class="lab-liquid" id="labLiquid"></div>
+          <div class="lab-contents" id="labContents"></div>
+        </div>
+        <div class="lab-actions">
+          <button class="btn primary" id="btnReact">🔥 واکنش بده</button>
+          <button class="btn ghost" id="btnClear">🗑 خالی کن</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="feedback info" id="labFeedback">مواد را انتخاب کن و داخل بشر بریز.</div>
+</section>
+
+<!-- ============ جعبه گفتگو ============ -->
+<div id="dialogue">
+  <div class="dlg-inner" id="dlgInner">
+    <div class="dlg-avatar" id="dlgAvatar">👩‍🔬</div>
+    <div class="dlg-body">
+      <div class="dlg-name" id="dlgName">پروفسور کیمیا</div>
+      <div class="dlg-text" id="dlgText"></div>
+      <button class="dlg-next" id="dlgNext" style="display:none">ادامه ▸</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ نشان ============ -->
+<div class="badge-popup" id="badgePopup">
+  <div class="badge-card">
+    <div class="badge-icon" id="badgeIcon">🏅</div>
+    <div class="badge-title" id="badgeTitle"></div>
+    <div class="badge-desc" id="badgeDesc"></div>
+    <button class="btn primary" id="badgeBtn" style="width:100%">ادامه بده</button>
+  </div>
+</div>
+
+<!-- ============ کارنامه نهایی ============ -->
+<div class="scoreboard-popup" id="scoreboardPopup">
+  <div class="scoreboard">
+    <div class="sb-medal" id="sbMedal">🏆</div>
+    <div class="sb-grade" id="sbGrade">A+</div>
+    <div class="sb-grade-title" id="sbGradeTitle"></div>
+    <div class="sb-breakdown">
+      <div class="sb-row"><span>🧪 مرحله ۱ — نجات مولکول‌ها</span><span class="sb-val" id="sbS1">۰</span></div>
+      <div class="sb-row"><span>🧼 مرحله ۲ — کشف صابون</span><span class="sb-val" id="sbS2">۰</span></div>
+      <div class="sb-row"><span>🔥 مرحله ۳ — ساخت صابون</span><span class="sb-val" id="sbS3">۰</span></div>
+      <div class="sb-total"><span>مجموع امتیاز</span><span class="sb-val" id="sbTotal">۰ / ۱۴۰</span></div>
+    </div>
+    <div class="sb-best" id="sbBest"></div>
+    <div class="sb-actions">
+      <button class="btn primary" id="sbRestart">🔄 دوباره بازی کن</button>
+      <button class="btn ghost" id="sbClose">بستن</button>
+    </div>
+    <div class="sb-creator">✍️ طراحی آموزشی: مهندس رحمانی</div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   ابزارها
+============================================================ */
+const FA='۰۱۲۳۴۵۶۷۸۹';
+const toFa=n=>String(n).replace(/\d/g,d=>FA[+d]);
+
+/* ---------- صدا ---------- */
+let actx;
+function tone(f,d=.15,t='sine',v=.14){
+  try{
+    if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(),g=actx.createGain();
+    o.type=t;o.frequency.value=f;
+    g.gain.setValueAtTime(v,actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+d);
+    o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+d);
+  }catch(e){}
+}
+const sndOk=()=>{tone(660,.1);setTimeout(()=>tone(880,.16),90);};
+const sndBad=()=>{tone(180,.28,'sawtooth',.1);};
+const sndStep=()=>{tone(523,.08);setTimeout(()=>tone(659,.08),80);setTimeout(()=>tone(784,.16),160);};
+const sndWin=()=>{[523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.22),i*110));};
+
+/* ---------- کاغذرنگی ---------- */
+function confetti(n=90){
+  const colors=['#f43f5e','#fbbf24','#22d3ee','#a855f7','#10b981','#f97316'];
+  for(let i=0;i<n;i++){
+    const c=document.createElement('div');c.className='confetti';
+    c.style.left=Math.random()*100+'vw';
+    c.style.background=colors[Math.floor(Math.random()*colors.length)];
+    c.style.animationDuration=(2.4+Math.random()*1.8)+'s';
+    c.style.animationDelay=(Math.random()*.7)+'s';
+    document.body.appendChild(c);setTimeout(()=>c.remove(),4600);
+  }
+}
+
+/* ============================================================
+   شخصیت‌ها
+============================================================ */
+const CHARACTERS={
+  kimia : {name:'پروفسور کیمیا', avatar:'👩‍🔬', color:'#6366f1'},
+  arash : {name:'آرش', avatar:'🧑‍🔬', color:'#0891b2'},
+  shadow: {name:'دکتر تاریکی', avatar:'🦹', color:'#dc2626'},
+  molak : {name:'ربات مولک', avatar:'🤖', color:'#10b981'}
+};
+
+/* ============================================================
+   سیستم گفتگو
+============================================================ */
+const dialogueEl=document.getElementById('dialogue');
+const dlgInner=document.getElementById('dlgInner');
+const dlgAvatarEl=document.getElementById('dlgAvatar');
+const dlgNameEl=document.getElementById('dlgName');
+const dlgTextEl=document.getElementById('dlgText');
+const dlgNextBtn=document.getElementById('dlgNext');
+let dlgQueue=[],dlgOnDone=null,typeTimer=null;
+
+function typewrite(text,el,onEnd){
+  clearInterval(typeTimer);el.innerHTML='';let i=0;
+  const cursor='<span class="cursor"></span>';
+  typeTimer=setInterval(()=>{
+    i++;el.innerHTML=text.slice(0,i)+cursor;
+    if(i>=text.length){clearInterval(typeTimer);el.innerHTML=text;onEnd&&onEnd();}
+  },20);
+}
+
+function setSpeaker(key){
+  const c=CHARACTERS[key]||CHARACTERS.kimia;
+  dlgAvatarEl.textContent=c.avatar;
+  dlgNameEl.textContent=c.name;
+  dlgInner.style.setProperty('--dlg-color',c.color);
+  dlgNameEl.style.color=c.color;
+  // replay bounce
+  dlgAvatarEl.style.animation='none';
+  void dlgAvatarEl.offsetWidth;
+  dlgAvatarEl.style.animation='dlgBounce .5s ease';
+}
+
+function say(lines,onDone,defaultSpeaker='kimia'){
+  if(typeof lines==='string')lines=[{sp:defaultSpeaker,txt:lines}];
+  else if(Array.isArray(lines)&&typeof lines[0]==='string'){
+    lines=lines.map(t=>({sp:defaultSpeaker,txt:t}));
+  }
+  dlgQueue=lines.slice();dlgOnDone=onDone;
+  dialogueEl.classList.add('show');
+  nextLine();
+}
+
+function nextLine(){
+  if(dlgQueue.length===0){
+    dlgNextBtn.style.display='none';
+    setTimeout(()=>{dialogueEl.classList.remove('show');const f=dlgOnDone;dlgOnDone=null;f&&f();},450);
+    return;
+  }
+  dlgNextBtn.style.display='none';
+  const line=dlgQueue.shift();
+  setSpeaker(line.sp||'kimia');
+  typewrite(line.txt,dlgTextEl,()=>{
+    dlgNextBtn.style.display='inline-block';
+    dlgNextBtn.textContent=dlgQueue.length>0?'ادامه ▸':'باشه ✓';
+  });
+}
+dlgNextBtn.onclick=()=>nextLine();
+
+/* ============================================================
+   داده‌های مولکول‌ها
+============================================================ */
+const MOLECULES=[
+  {name:'آب',formula:'H₂O',answer:'polar',
+   struct:`<svg viewBox="0 0 180 96" class="struct">
+     <line x1="72" y1="40" x2="36" y2="66" class="bond"/><line x1="88" y1="40" x2="124" y2="66" class="bond"/>
+     <text x="80" y="34" text-anchor="middle" class="atom">O</text>
+     <text x="30" y="82" text-anchor="middle" class="atom">H</text>
+     <text x="130" y="82" text-anchor="middle" class="atom">H</text>
+     <text x="104" y="24" text-anchor="middle" style="font-size:13px;fill:#dc2626;font-weight:800">δ⁻</text>
+     <text x="18" y="62" text-anchor="middle" style="font-size:13px;fill:#2563eb;font-weight:800">δ⁺</text></svg>`,
+   tip:'آب <b>قطبی</b> است؛ پیوند O—H قطبی است و شکل خمیده مولکول باعث قطبیت می‌شود.'},
+  {name:'بنزین',formula:'C₈H₁₈',answer:'nonpolar',
+   struct:`<svg viewBox="0 0 220 96" class="struct">
+     <polyline points="18,68 44,44 70,68 96,44 122,68 148,44 174,68 200,44" class="bond" fill="none"/>
+     <text x="110" y="90" text-anchor="middle" style="font-size:12px;fill:#2563eb;font-weight:700">زنجیره هیدروکربنی</text></svg>`,
+   tip:'بنزین فقط C و H دارد؛ پس <b>ناقطبی</b> است و در هگزان حل می‌شود.'},
+  {name:'اتیلن گلیکول',formula:'HOCH₂CH₂OH',answer:'polar',
+   struct:`<svg viewBox="0 0 220 90" class="struct">
+     <text x="4" y="56" class="atom">HO</text><line x1="38" y1="50" x2="58" y2="50" class="bond"/>
+     <text x="62" y="56" class="atom">CH₂</text><line x1="112" y1="50" x2="132" y2="50" class="bond"/>
+     <text x="136" y="56" class="atom">CH₂</text><line x1="186" y1="50" x2="200" y2="50" class="bond"/>
+     <text x="203" y="56" class="atom">OH</text></svg>`,
+   tip:'دو گروه <b>—OH</b> در دو سر → پیوند هیدروژنی قوی → <b>قطبی</b>.'},
+  {name:'وازلین',formula:'C₂₅H₅₂',answer:'nonpolar',
+   struct:`<svg viewBox="0 0 260 92" class="struct">
+     <polyline points="10,64 30,44 50,64 70,44 90,64 110,44 130,64 150,44 170,64 190,44 210,64 230,44 250,64" class="bond" fill="none"/>
+     <text x="130" y="86" text-anchor="middle" style="font-size:12px;fill:#2563eb;font-weight:700">آلکان بلندزنجیر</text></svg>`,
+   tip:'وازلین هیچ گروه قطبی ندارد؛ کاملاً <b>ناقطبی</b>.'},
+  {name:'نمک خوراکی',formula:'NaCl',answer:'polar',
+   struct:`<svg viewBox="0 0 210 100" class="struct">
+     <circle cx="58" cy="52" r="31" fill="#dbeafe" stroke="#2563eb" stroke-width="3.5"/>
+     <text x="58" y="61" text-anchor="middle" class="atom">Na⁺</text>
+     <circle cx="152" cy="52" r="31" fill="#fee2e2" stroke="#dc2626" stroke-width="3.5"/>
+     <text x="152" y="61" text-anchor="middle" class="atom">Cl⁻</text></svg>`,
+   tip:'ترکیب <b>یونی</b> — فقط در حلال قطبی حل می‌شود.'},
+  {name:'روغن زیتون',formula:'C₅₇H₁₀₄O₆',answer:'nonpolar',
+   struct:`<div class="struct-html">
+     <span class="head">CH₂—O—C(=O)</span>—<span class="tail">R₁</span><br>
+     <span class="head">CH —O—C(=O)</span>—<span class="tail">R₂</span><br>
+     <span class="head">CH₂—O—C(=O)</span>—<span class="tail">R₃</span></div>`,
+   tip:'تری‌گلیسرید با سه زنجیره بلند → بخش عمده <b>ناقطبی</b>.'},
+  {name:'هگزانول',formula:'CH₃(CH₂)₅OH',answer:'both',
+   struct:`<svg viewBox="0 0 270 96" class="struct">
+     <polyline points="18,72 48,46 78,72 108,46 138,72 168,46" class="bond" fill="none"/>
+     <line x1="168" y1="46" x2="196" y2="70" class="bond hi"/>
+     <text x="202" y="78" class="atom" style="fill:#dc2626">OH</text>
+     <text x="86" y="94" text-anchor="middle" style="font-size:11.5px;fill:#2563eb;font-weight:700">سر ناقطبی</text>
+     <text x="228" y="42" text-anchor="middle" style="font-size:11.5px;fill:#dc2626;font-weight:700">سر قطبی</text></svg>`,
+   tip:'مولکول <b>آمفی‌فیل</b> — هم در اوره هم در هگزان حل می‌شود! (مثل صابون)'}
+];
+
+/* ============================================================
+   متن داستان
+============================================================ */
+const STORY={
+  intro:[
+    'آهای... بیدار شو! 😴',
+    'من <b>پروفسور کیمیا</b> هستم. یک حادثه‌ی عجیب در آزمایشگاهم رخ داده...',
+    'مولکول‌ها همه جا پراکنده شده‌اند و نمی‌دانند به کدام حلال پناه ببرند! 😱',
+    'تو تنها دستیاری هستی که می‌تواند کمکم کند. آماده‌ای؟ 🧪'
+  ],
+  beforeStage1:[
+    {sp:'kimia',txt:'عالی! اولین ماموریت: <b>نجات مولکول‌ها</b>'},
+    {sp:'kimia',txt:'دو بشر جادویی داریم: <b>اوره</b> (قطبی) و <b>هگزان</b> (ناقطبی).'},
+    {sp:'arash',txt:'هه! فکر می‌کنی می‌تونی از من بهتر باشی؟ 😏 من آرش هستم، رقیب تو!'},
+    {sp:'arash',txt:'من قبلاً این مرحله رو رفتم و ۴۰ امتیاز گرفتم. حالا نوبت توئه!'},
+    {sp:'kimia',txt:'آرش، لطفاً! 😅 قانون طلایی شیمی را بگو: «<b>شبیه، در شبیه حل می‌شود.</b>»'},
+    {sp:'molak',txt:'بیپ‌بوپ! 🤖 من ربات مولک هستم. اگه گیر کردی، فقط ازم بپرس!'}
+  ],
+  afterStage1:[
+    {sp:'arash',txt:'ای بابا... تو حتی بهتر از من امتیاز گرفتی! 😤'},
+    {sp:'arash',txt:'ولی یه چیز عجیب دیدم: <b>هگزانول</b> هم در اوره حل شد، هم در هگزان!'},
+    {sp:'kimia',txt:'دقیقاً آرش جان! این یعنی یک مولکول می‌تواند <b>دو سر متفاوت</b> داشته باشد.'},
+    {sp:'shadow',txt:'هههههه! 😈 من <b>دکتر تاریکی</b> هستم و نمی‌گذارم راز صابون را کشف کنید!'},
+    {sp:'shadow',txt:'آزمایشگاه را من خراب کردم! می‌خواستم فرمول صابون را برای خودم نگه دارم...'},
+    {sp:'kimia',txt:'فرار نکن دکتر! دستیار عزیز، آماده‌ای وارد <b>مرحله ۲</b> شوی؟'}
+  ],
+  beforeStage2:[
+    {sp:'kimia',txt:'مرحله دوم: <b>کشف راز صابون</b> 🧼'},
+    {sp:'molak',txt:'بیپ‌بوپ! ساختار صابون دو سر داره: قطبی و ناقطبی.'},
+    {sp:'shadow',txt:'هاها! ولی تو نمی‌تونی بگی کدوم قطبیه! 😈'},
+    {sp:'kimia',txt:'به حرف دکتر گوش نده! روی سؤالات تمرکز کن.'}
+  ],
+  afterStage2:[
+    {sp:'kimia',txt:'🌟 آفرین! حالا ساختار صابون را کامل می‌شناسی.'},
+    {sp:'arash',txt:'خب... اینو باید اعتراف کنم. تو خوب بلدی! 😅'},
+    {sp:'shadow',txt:'نه! نه! نمی‌ذارم صابون بسازی! 😡'},
+    {sp:'molak',txt:'بیپ‌بوپ! وقتشه مرحله سوم شروع شه!'}
+  ],
+  beforeStage3:[
+    {sp:'kimia',txt:'آخرین ماموریت: <b>ساخت صابون مایع</b> 🧪'},
+    {sp:'molak',txt:'هشدار! دو باز داریم: <b>KOH</b> و <b>NaOH</b>.'},
+    {sp:'shadow',txt:'هاها! تو اشتباه می‌کنی و صابون جامد می‌سازی! 😈'},
+    {sp:'arash',txt:'من که نتونستم مایع بسازم... ببینم تو می‌تونی!'},
+    {sp:'kimia',txt:'راهنمایی می‌کنم: استر بلندزنجیر را با باز مناسب ترکیب کن. برو! 💪'}
+  ],
+  win:[
+    {sp:'shadow',txt:'نههههه! 😱 شکست خوردم! صابون مایع ساختی!'},
+    {sp:'kimia',txt:'🎉🎉 تبریک! آزمایشگاه را نجات دادی!'},
+    {sp:'arash',txt:'خب... تبریک! تو از من بهتری. 🤝'},
+    {sp:'molak',txt:'بیپ‌بوپ! تو یک شیمی‌دان واقعی هستی! 🏆'},
+    {sp:'kimia',txt:'وقتشه کارنامه‌ات را بگیری... ✨'}
+  ]
+};
+
+/* ============================================================
+   مرحله ۱
+============================================================ */
+const board=document.getElementById('board');
+const beakerLeft=document.getElementById('beakerLeft');
+const beakerRight=document.getElementById('beakerRight');
+const feedbackEl=document.getElementById('feedback');
+const progressEl=document.getElementById('progress');
+const scoreEl=document.getElementById('score');
+
+let molIndex=0,score1=0,wrongThis=0,placedSide=null,busy=false,card=null,stage1Done=false;
+
+function renderScore(){scoreEl.textContent=toFa(score1);}
+function makeCard(m){
+  const d=document.createElement('div');d.className='mol-card';
+  d.innerHTML=`<div class="mol-name">${m.name}</div><div>${m.struct}</div>
+    <div class="mol-formula" dir="ltr">${m.formula}</div>`;
+  return d;
+}
+function loadMolecule(){
+  if(molIndex>=MOLECULES.length){finishStage1();return;}
+  const m=MOLECULES[molIndex];
+  placedSide=null;wrongThis=0;busy=false;
+  if(card)card.remove();
+  card=makeCard(m);
+  card.style.transition='none';
+  card.style.left='50%';card.style.top='48%';
+  card.style.transform='translate(-50%,-50%) scale(1)';card.style.opacity='1';
+  board.appendChild(card);
+  requestAnimationFrame(()=>{card.style.transition='';});
+  progressEl.textContent='مولکول '+toFa(molIndex+1)+' از '+toFa(MOLECULES.length);
+  feedbackEl.className='feedback info';
+  feedbackEl.innerHTML=`مولکول <b>${m.name}</b> ظاهر شد. کدام بشر؟`;
+}
+function riseLiquid(side){
+  const liq=(side==='left'?beakerLeft:beakerRight).querySelector('.liquid');
+  let h=parseFloat(liq.dataset.h||'55');h=Math.min(84,h+4);
+  liq.dataset.h=h;liq.style.height=h+'%';
+}
+function addChip(side,name){
+  const wrap=(side==='left'?beakerLeft:beakerRight).querySelector('.chips');
+  const c=document.createElement('span');c.className='chip';c.textContent=name;wrap.appendChild(c);
+}
+function chooseBeaker(side){
+  if(busy||stage1Done)return;
+  if(placedSide===side)return;
+  const m=MOLECULES[molIndex];if(!m||!card)return;
+  busy=true;card.classList.remove('wobble');placedSide=side;
+  const wrap=side==='left'?beakerLeft:beakerRight;
+  const bR=wrap.getBoundingClientRect(),boardR=board.getBoundingClientRect();
+  card.style.left=(bR.left-boardR.left+bR.width/2)+'px';
+  card.style.top=(bR.top-boardR.top+bR.height*.44)+'px';
+  card.style.transform='translate(-50%,-50%) scale(.4)';
+  const correct=m.answer==='both'||(m.answer==='polar'&&side==='left')||(m.answer==='nonpolar'&&side==='right');
+  setTimeout(()=>{
+    if(correct){
+      sndOk();
+      card.style.opacity='0';
+      card.style.transform='translate(-50%,-50%) scale(.05)';
+      addChip(side,m.name);riseLiquid(side);
+      score1+=(wrongThis===0?10:5);renderScore();
+      const solvent=side==='left'?'اوره (قطبی)':'هگزان (ناقطبی)';
+      feedbackEl.className='feedback success';
+      feedbackEl.innerHTML=`✅ <b>${m.name}</b> در <b>${solvent}</b> حل شد.<br>${m.tip}`;
+      molIndex++;wrongThis=0;
+      setTimeout(loadMolecule,1900);
+    }else{
+      sndBad();
+      wrongThis++;card.classList.add('wobble');
+      feedbackEl.className='feedback error';
+      feedbackEl.innerHTML=`❌ <b>${m.name}</b> در این حلال حل نمی‌شود و غوطه‌ور می‌ماند!<br>بشر دیگر را امتحان کن.`;
+      // Dr. Darkness taunts on first mistake with this molecule
+      if(wrongThis===1){
+        setTimeout(()=>{
+          say([{sp:'shadow',txt:'هاهاها! 😈 دیدی؟ گفتم که نمی‌تونی! '+m.name+' رو درست انتخاب کنی!'}],
+              null,'shadow');
+        },300);
+      }
+      busy=false;
+    }
+  },900);
+}
+beakerLeft.onclick=()=>chooseBeaker('left');
+beakerRight.onclick=()=>chooseBeaker('right');
+
+function finishStage1(){
+  stage1Done=true;
+  progressEl.textContent='پایان مرحله ۱';
+  if(card){card.remove();card=null;}
+  feedbackEl.className='feedback success';
+  feedbackEl.innerHTML='🎉 همه مولکول‌ها بررسی شدند!';
+  markStepDone(1);unlockStep(2);
+  sndStep();
+  showBadge('🏅','نشان «نجات‌دهنده مولکول‌ها»','یاد گرفتی قطبی در قطبی و ناقطبی در ناقطبی حل می‌شود.',()=>{
+    say(STORY.afterStage1,()=>switchTab(2));
+  });
+}
+
+/* ============================================================
+   مرحله ۲
+============================================================ */
+const QUESTIONS=[
+  {q:'در مولکول صابون، کدام بخش <u>قطبی (آب‌دوست)</u> است؟',
+   options:[{t:'زنجیره هیدروکربنی R',ok:false},{t:'گروه COO⁻',ok:true},{t:'یون Na⁺',ok:false}],
+   hl:['soapHead'],tip:'گروه COO⁻ بار منفی دارد و با آب پیوند هیدروژنی می‌سازد.'},
+  {q:'کدام بخش <u>ناقطبی (آب‌گریز)</u> است؟',
+   options:[{t:'زنجیره هیدروکربنی R',ok:true},{t:'گروه COO⁻',ok:false},{t:'یون Na⁺',ok:false}],
+   hl:['soapTail'],tip:'زنجیره R فقط C—C و C—H دارد — ناقطبی و آب‌گریز.'},
+  {q:'کدام بخش <u>آنیون</u> است؟',
+   options:[{t:'زنجیره R',ok:false},{t:'RCOO⁻',ok:true},{t:'Na⁺',ok:false}],
+   hl:['soapTail','soapHead'],tip:'کل RCOO⁻ بار منفی دارد → آنیون → «سورفکتانت آنیونی».'},
+  {q:'کدام بخش <u>کاتیون</u> است؟',
+   options:[{t:'زنجیره R',ok:false},{t:'COO⁻',ok:false},{t:'Na⁺',ok:true}],
+   hl:['soapNa'],tip:'Na⁺ بار مثبت دارد. در صابون مایع، جایش K⁺ می‌نشیند و RCOOK می‌سازد.'}
+];
+const qProgress=document.getElementById('qProgress');
+const qText=document.getElementById('qText');
+const qOptions=document.getElementById('qOptions');
+const qFeedback=document.getElementById('qFeedback');
+let qIndex=0,score2=0,stage2Done=false;
+
+function clearHL(){['soapTail','soapHead','soapNa'].forEach(id=>document.getElementById(id).classList.remove('hl'));}
+function renderQuestion(){
+  clearHL();qFeedback.className='q-feedback';
+  if(qIndex>=QUESTIONS.length){
+    qText.innerHTML='🎉 مرحله ۲ تمام شد!';
+    qOptions.innerHTML='';qProgress.textContent='';
+    qFeedback.className='q-feedback show ok';
+    qFeedback.innerHTML=`امتیاز: <b>${toFa(score2)}</b> از ${toFa(QUESTIONS.length*10)}`;
+    if(!stage2Done){stage2Done=true;markStepDone(2);unlockStep(3);sndStep();
+      showBadge('🔬','نشان «شناساگر صابون»','ساختار دوگانه صابون را کشف کردی!',()=>{
+        say(STORY.afterStage2,()=>say(STORY.beforeStage3,()=>switchTab(3)));
+      });}
+    return;
+  }
+  const q=QUESTIONS[qIndex];
+  qProgress.textContent='سؤال '+toFa(qIndex+1)+' از '+toFa(QUESTIONS.length);
+  qText.innerHTML=q.q;qOptions.innerHTML='';
+  q.options.forEach(op=>{
+    const b=document.createElement('button');b.className='opt';b.textContent=op.t;
+    b.onclick=()=>answerQ(b,op.ok);qOptions.appendChild(b);
+  });
+}
+function answerQ(btn,ok){
+  const q=QUESTIONS[qIndex];const all=qOptions.querySelectorAll('.opt');
+  all.forEach(b=>b.disabled=true);
+  if(ok){
+    sndOk();btn.classList.add('correct');score2+=10;
+    q.hl.forEach(id=>document.getElementById(id).classList.add('hl'));
+    qFeedback.className='q-feedback show ok';
+    qFeedback.innerHTML='✅ درست! '+q.tip;
+    setTimeout(()=>{qIndex++;renderQuestion();},2100);
+  }else{
+    sndBad();btn.classList.add('wrong');
+    qFeedback.className='q-feedback show no';
+    qFeedback.innerHTML='❌ نه، دوباره فکر کن.';
+    // Villain mocks
+    setTimeout(()=>{
+      say([{sp:'shadow',txt:'هاهاها! 😈 عجب اشتباهی! بذار کمکت کنم... نه نه، خودت فکر کن!'}],
+          null,'shadow');
+    },400);
+    setTimeout(()=>{btn.classList.remove('wrong');all.forEach(b=>b.disabled=false);},1300);
+  }
+}
+
+/* ============================================================
+   مرحله ۳
+============================================================ */
+const REAGENTS=[
+  {id:'koh',name:'پتاسیم هیدروکسید',formula:'KOH',icon:'🧴'},
+  {id:'naoh',name:'سدیم هیدروکسید',formula:'NaOH',icon:'🧴'},
+  {id:'ester',name:'استر با جرم مولی زیاد',formula:'C₅₇H₁₀₄O₆',icon:'🫒'},
+  {id:'acid',name:'اتانوییک اسید',formula:'CH₃COOH',icon:'🍶'},
+  {id:'nacl',name:'سدیم کلرید',formula:'NaCl',icon:'🧂'},
+  {id:'water',name:'آب',formula:'H₂O',icon:'💧'},
+  {id:'ethanol',name:'اتانول',formula:'C₂H₅OH',icon:'🍷'},
+  {id:'glycerol',name:'گلیسرول',formula:'C₃H₈O₃',icon:'🫧'}
+];
+const reagentsEl=document.getElementById('reagents');
+const labBeaker=document.getElementById('labBeaker');
+const labLiquid=document.getElementById('labLiquid');
+const labContents=document.getElementById('labContents');
+const labFeedback=document.getElementById('labFeedback');
+const btnReact=document.getElementById('btnReact');
+const btnClear=document.getElementById('btnClear');
+const selected=new Set();
+let stage3Done=false,score3=0;
+
+function renderReagents(){
+  reagentsEl.innerHTML='';
+  REAGENTS.forEach(r=>{
+    const b=document.createElement('button');
+    b.className='reagent'+(selected.has(r.id)?' selected':'');
+    b.innerHTML=`<span class="r-icon">${r.icon}</span><span class="r-name">${r.name}</span>
+      <span class="r-formula" dir="ltr">${r.formula}</span>`;
+    b.onclick=()=>{
+      if(selected.has(r.id))selected.delete(r.id);else selected.add(r.id);
+      tone(440,.05,'square',.06);renderReagents();renderContents();
+    };
+    reagentsEl.appendChild(b);
+  });
+}
+function renderContents(){
+  labContents.innerHTML='';
+  selected.forEach(id=>{
+    const r=REAGENTS.find(x=>x.id===id);
+    const c=document.createElement('span');c.className='chip';c.textContent=r.name;labContents.appendChild(c);
+  });
+  if(selected.size>0&&parseFloat(labLiquid.style.height||0)<20){
+    labLiquid.style.height='22%';
+    labLiquid.style.background='linear-gradient(180deg,#e2e8f0,#cbd5e1)';
+  }
+  if(selected.size===0)labLiquid.style.height='0%';
+}
+function makeBubbles(){
+  for(let i=0;i<14;i++){
+    const b=document.createElement('div');b.className='bubble';
+    const s=6+Math.random()*14;b.style.width=s+'px';b.style.height=s+'px';
+    b.style.left=(5+Math.random()*85)+'%';
+    b.style.animationDelay=(Math.random()*2.2)+'s';
+    labBeaker.appendChild(b);setTimeout(()=>b.remove(),6000);
+  }
+}
+function clearBubbles(){labBeaker.querySelectorAll('.bubble').forEach(b=>b.remove());}
+
+btnClear.onclick=()=>{
+  selected.clear();renderReagents();renderContents();clearBubbles();
+  labLiquid.style.height='0%';labLiquid.style.background='transparent';
+  labFeedback.className='feedback info';labFeedback.innerHTML='بشر خالی شد.';
+};
+
+btnReact.onclick=()=>{
+  const ids=[...selected];
+  if(ids.length===0){labFeedback.className='feedback error';labFeedback.innerHTML='⚠️ اول مواد بریز!';return;}
+  const hasKOH=ids.includes('koh'),hasNaOH=ids.includes('naoh'),
+        hasEster=ids.includes('ester'),hasAcid=ids.includes('acid');
+  clearBubbles();
+
+  if(hasKOH&&hasEster){
+    sndWin();confetti(120);
+    labLiquid.style.height='72%';
+    labLiquid.style.background='linear-gradient(180deg,#fef9c3,#fde68a)';
+    setTimeout(makeBubbles,300);
+    labFeedback.className='feedback success';
+    labFeedback.innerHTML='✅ <b>آفرین! صابون مایع ساختی!</b> 🧼<br>'+
+      '<span class="formula-line">استر + 3 KOH → 3 RCOOK + C₃H₈O₃</span>'+
+      'نمک پتاسیم اسید چرب (<b>RCOOK</b>) = صابون مایع، همراه با گلیسرول.';
+    if(!stage3Done){
+      stage3Done=true;score3=30;markStepDone(3);sndStep();
+      setTimeout(()=>{
+        showBadge('🏆','مدال «استاد مولکول‌ها»','صابون مایع ساختی و آزمایشگاه را نجات دادی!',()=>{
+          say(STORY.win,()=>{confetti(200);setTimeout(showScoreboard,1400);});
+        });
+      },1600);
+    }
+    return;
+  }
+  if(hasNaOH&&hasEster){
+    sndBad();
+    labLiquid.style.height='72%';
+    labLiquid.style.background='linear-gradient(180deg,#f8fafc,#e2e8f0)';
+    labFeedback.className='feedback error';
+    labFeedback.innerHTML='⚠️ نزدیک بود! <b>صابون جامد</b> ساختی.<br>'+
+      '<span class="formula-line">استر + 3 NaOH → 3 RCOONa (جامد) + C₃H₈O₃</span>'+
+      'برای <b>صابون مایع</b> از <b>KOH</b> استفاده کن.';
+    setTimeout(()=>{
+      say([{sp:'shadow',txt:'هاهاها! 😈 گفتم که! صابون جامد ساختی! حالا چی می‌گی؟!'}],null,'shadow');
+    },400);
+    return;
+  }
+  if((hasKOH||hasNaOH)&&hasAcid){
+    sndBad();
+    labFeedback.className='feedback error';
+    labFeedback.innerHTML='❌ واکنش انجام شد ولی <b>صابون</b> تولید نشد!<br>'+
+      '<span class="formula-line">CH₃COOH + KOH → CH₃COOK + H₂O</span>'+
+      'اتانوییک اسید زنجیره کوتاه دارد؛ به <b>استر بلندزنجیر</b> نیاز داری.';
+    return;
+  }
+  sndBad();
+  labFeedback.className='feedback error';
+  labFeedback.innerHTML='❌ هیچ واکنش صابون‌سازی رخ نداد. باز قوی + استر بلندزنجیر لازم داری.';
+};
+
+/* ============================================================
+   نشان و پیشرفت
+============================================================ */
+function showBadge(icon,title,desc,onClose){
+  document.getElementById('badgeIcon').textContent=icon;
+  document.getElementById('badgeTitle').textContent=title;
+  document.getElementById('badgeDesc').textContent=desc;
+  const pop=document.getElementById('badgePopup');pop.classList.add('show');
+  const btn=document.getElementById('badgeBtn');
+  btn.onclick=()=>{pop.classList.remove('show');onClose&&onClose();};
+}
+function markStepDone(n){document.querySelector(`.step[data-step="${n}"]`).classList.add('done');}
+function unlockStep(n){
+  document.querySelector(`.step[data-step="${n}"]`).classList.add('unlocked');
+  const line=document.querySelector(`.step-line[data-line="${n-1}"]`);
+  if(line)line.classList.add('filled');
+}
+function switchTab(n){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+n).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ============================================================
+   کارنامه نهایی
+============================================================ */
+function showScoreboard(){
+  const total=score1+score2+score3;
+  const max=140;
+  let grade='D',title='تازه‌کار',medal='🥉';
+  if(total>=130){grade='A+';title='استاد بزرگ مولکول‌ها';medal='🏆';}
+  else if(total>=110){grade='A';title='شیمی‌دان ماهر';medal='🥇';}
+  else if(total>=90){grade='B';title='دستیار فعال';medal='🥈';}
+  else if(total>=70){grade='C';title='شاگرد کوشا';medal='🎖️';}
+  else if(total>=50){grade='D';title='تازه‌کار';medal='🥉';}
+  else{grade='E';title='نیاز به تلاش بیشتر';medal='📘';}
+
+  document.getElementById('sbMedal').textContent=medal;
+  document.getElementById('sbGrade').textContent=grade;
+  document.getElementById('sbGradeTitle').textContent=title;
+  document.getElementById('sbS1').textContent=toFa(score1);
+  document.getElementById('sbS2').textContent=toFa(score2);
+  document.getElementById('sbS3').textContent=toFa(score3);
+  document.getElementById('sbTotal').textContent=toFa(total)+' / '+toFa(max);
+
+  // Best score
+  let best=0;
+  try{best=parseInt(localStorage.getItem('kimia_best')||'0');}catch(e){}
+  if(total>best){
+    best=total;
+    try{localStorage.setItem('kimia_best',best);}catch(e){}
+    document.getElementById('sbBest').innerHTML='🎉 <b>رکورد جدید!</b> بهترین امتیاز تو: '+toFa(best);
+  }else{
+    document.getElementById('sbBest').innerHTML='📊 بهترین رکورد تو: '+toFa(best)+' — این بار '+toFa(total);
+  }
+  document.getElementById('scoreboardPopup').classList.add('show');
+  sndWin();confetti(150);
+}
+document.getElementById('sbClose').onclick=()=>{
+  document.getElementById('scoreboardPopup').classList.remove('show');
+};
+document.getElementById('sbRestart').onclick=()=>location.reload();
+
+/* ============================================================
+   راه‌اندازی
+============================================================ */
+document.querySelector('.step[data-step="1"]').classList.add('unlocked');
+
+// Intro typewriter
+const introText=document.getElementById('introText');
+const startBtn=document.getElementById('startBtn');
+let introLines=STORY.intro.slice(),introIdx=0;
+function playIntroLine(){
+  if(introIdx>=introLines.length){startBtn.classList.add('show');return;}
+  const line=introLines[introIdx];let i=0;introText.innerHTML='';
+  const cursor='<span class="cursor"></span>';
+  const t=setInterval(()=>{
+    i++;introText.innerHTML=line.slice(0,i)+cursor;
+    if(i>=line.length){clearInterval(t);introText.innerHTML=line;introIdx++;setTimeout(playIntroLine,650);}
+  },25);
+}
+playIntroLine();
+
+startBtn.onclick=()=>{
+  tone(660,.1);setTimeout(()=>tone(880,.2),100);
+  document.getElementById('intro').classList.add('hide');
+  document.body.classList.add('day');
+  setTimeout(()=>{
+    say(STORY.beforeStage1,()=>{loadMolecule();renderScore();});
+  },500);
+};
+
+renderScore();
+renderQuestion();
+renderReagents();
+renderContents();
+</script>
+</body>
+</html>
